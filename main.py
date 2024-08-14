@@ -1,6 +1,7 @@
 import requests
 import streamlit as st
 import pandas as pd
+import numpy as np
 import pydeck as pdk
 
 # Your API URL
@@ -9,6 +10,7 @@ responses = requests.get(url)
 response = responses.json()
 res = response.get('positions')
 
+st.map(data = "ISS",latitude=res[0].get('satlatitude'), longitude=res[0].get('satlongitude'), color="#FF00FF",zoom = 3) 
 # Extract latitude and longitude
 latitude = res[0].get('satlatitude')
 longitude = res[0].get('satlongitude')
@@ -17,24 +19,18 @@ longitude = res[0].get('satlongitude')
 df = pd.DataFrame({
     'lat': [latitude],
     'lon': [longitude],
-    'name': ['International Space Station'],
-    'icon_data': [{
-        'url': 'https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/icon-atlas.png',  # Use the local file path for the image
-        'width': 3000,  # Original width
-        'height': 1569,  # Original height
-        'anchorY': 1569 # Adjust anchor based on the image
-    }]
+    'name': ['International Space Station']  # Add a column for the tooltip
 })
 
-# Define an IconLayer
-icon_layer = pdk.Layer(
-    'IconLayer',
+# Define a layer for pydeck
+layer = pdk.Layer(
+    'ScatterplotLayer',
     data=df,
-    get_icon='icon_data',
-    get_size=4,  # Adjust as needed
-    size_scale=1,  # Scale down significantly due to large original size
     get_position='[lon, lat]',
+    get_color='[0, 255, 255]',  # Cyan color
+    get_radius=50000,
     pickable=True,
+    tooltip=True
 )
 
 # Define the view of the map
@@ -47,7 +43,7 @@ view_state = pdk.ViewState(
 
 # Render the map
 r = pdk.Deck(
-    layers=[icon_layer],
+    layers=[layer],
     initial_view_state=view_state,
     tooltip={"text": "{name}"}
 )
