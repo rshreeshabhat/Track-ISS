@@ -26,7 +26,7 @@ layer = pdk.Layer(
     'ScatterplotLayer',
     data=df,
     get_position='[lon, lat]',
-    get_color='[0, 255, 255]',  # Cyan color
+    get_color='[255,0 , 255]',  # Cyan color
     get_radius=50000,
     pickable=True,
     tooltip=True
