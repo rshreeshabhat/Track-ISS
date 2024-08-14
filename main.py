@@ -10,7 +10,6 @@ responses = requests.get(url)
 response = responses.json()
 res = response.get('positions')
 
-st.map(data = "ISS",latitude=res[0].get('satlatitude'), longitude=res[0].get('satlongitude'), color="#FF00FF",zoom = 3) 
 # Extract latitude and longitude
 latitude = res[0].get('satlatitude')
 longitude = res[0].get('satlongitude')
