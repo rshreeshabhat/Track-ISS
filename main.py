@@ -31,8 +31,8 @@ icon_layer = pdk.Layer(
     'IconLayer',
     data=df,
     get_icon='icon_data',
-    get_size=4,  # Adjust size as needed
-    size_scale=15,
+    get_size=4,  # Adjust as needed
+    size_scale=1,  # Scale down significantly due to large original size
     get_position='[lon, lat]',
     pickable=True,
 )
