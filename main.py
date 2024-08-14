@@ -20,9 +20,9 @@ df = pd.DataFrame({
     'name': ['International Space Station'],
     'icon_data': [{
         'url': 'ISS_spacecraft_model_1.png',  # Use the local file path for the image
-        'width': 128,
-        'height': 128,
-        'anchorY': 128  # Adjust anchor based on the image
+        'width': 3000,  # Original width
+        'height': 1569,  # Original height
+        'anchorY': 1569 # Adjust anchor based on the image
     }]
 })
 
