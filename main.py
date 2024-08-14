@@ -17,18 +17,24 @@ longitude = res[0].get('satlongitude')
 df = pd.DataFrame({
     'lat': [latitude],
     'lon': [longitude],
-    'name': ['International Space Station']  # Add a column for the tooltip
+    'name': ['International Space Station'],
+    'icon_data': [{
+        'url': 'ISS_spacecraft_model_1.png',  # Use the local file path for the image
+        'width': 128,
+        'height': 128,
+        'anchorY': 128  # Adjust anchor based on the image
+    }]
 })
 
-# Define a layer for pydeck
-layer = pdk.Layer(
-    'ScatterplotLayer',
+# Define an IconLayer
+icon_layer = pdk.Layer(
+    'IconLayer',
     data=df,
+    get_icon='icon_data',
+    get_size=4,  # Adjust size as needed
+    size_scale=15,
     get_position='[lon, lat]',
-    get_color='[0, 255, 255]',  # Cyan color
-    get_radius=50000,
     pickable=True,
-    tooltip=True
 )
 
 # Define the view of the map
@@ -41,7 +47,7 @@ view_state = pdk.ViewState(
 
 # Render the map
 r = pdk.Deck(
-    layers=[layer],
+    layers=[icon_layer],
     initial_view_state=view_state,
     tooltip={"text": "{name}"}
 )
