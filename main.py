@@ -8,7 +8,5 @@ responses = requests.get(url)
 response = responses.json()
 res = response.get('positions')
 
-data = [{'lat': res[0].get('satlatitude'), 'lon': res[0].get('satlongitude')}]  
-
-df = pd.DataFrame(data) 
+df = pd.DataFrame(data = "ISS",latitude=res[0].get('satlatitude'), longitude=res[0].get('satlongitude'), color="#00FFFF",zoom = 3) 
 st.map(df)
