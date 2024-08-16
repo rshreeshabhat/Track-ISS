@@ -8,25 +8,28 @@ st.title("International Space Station Tracker")
 
 # Sidebar navigation
 st.sidebar.title("Navigation")
-option = st.sidebar.radio("Go to", ["Home", "ISS Location"])
+st.sidebar.write("Home")
 
 # ISS Data Fetching
 def fetch_iss_data():
     url = "https://api.n2yo.com/rest/v1/satellite/positions/25544/41.702/-76.014/0/2/&apiKey=56C4JJ-JGEVZ3-KZSEXW-5BKR"
     response = requests.get(url).json()
-    position = response['positions'][0]
-    return {
-        'latitude': position['satlatitude'],
-        'longitude': position['satlongitude'],
-        'altitude': position['sataltitude'],
-        'velocity': position['satvelocity'],
-    }
+    
+    if 'positions' in response:
+        position = response['positions'][0]
+        return {
+            'latitude': position.get('satlatitude', 'N/A'),
+            'longitude': position.get('satlongitude', 'N/A'),
+        }
+    else:
+        st.error("Error: 'positions' not found in API response.")
+        return None
 
-# Display ISS Location page
-if option == "ISS Location":
-    st.header("Current Location of the ISS")
+# Display ISS Location and Map
+st.header("Current Location of the ISS")
 
-    iss_data = fetch_iss_data()
+iss_data = fetch_iss_data()
+if iss_data:
     latitude = iss_data['latitude']
     longitude = iss_data['longitude']
     
@@ -34,8 +37,6 @@ if option == "ISS Location":
     st.subheader("Details")
     st.write(f"**Latitude:** {latitude}")
     st.write(f"**Longitude:** {longitude}")
-    st.write(f"**Altitude:** {iss_data['altitude']} km")
-    st.write(f"**Velocity:** {iss_data['velocity']} km/h")
 
     # Create DataFrame for map
     df = pd.DataFrame({
@@ -70,11 +71,6 @@ if option == "ISS Location":
     )
 
     st.pydeck_chart(r)
-
-# Home page
 else:
-    st.header("Welcome to the ISS Tracker")
-    st.write("""
-        This application tracks the current location of the International Space Station (ISS).
-        Use the navigation on the left to explore the app.
-    """)
+    st.write("Failed to fetch ISS data.")
+
