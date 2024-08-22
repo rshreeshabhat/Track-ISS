@@ -85,4 +85,74 @@ def fetch_satellite_data(satellite_ids):
                 'color': satellite_colors[sat_name]
             })
         else:
-           
+            st.error(f"Error: 'positions' not found for satellite {sat_name}.")
+    
+    return satellite_data
+
+# Checkboxes for satellite selection below the map
+st.subheader("Select Satellites to Display on the Map:")
+
+# Arrange checkboxes in a grid layout
+cols = st.columns(4)  # Creating 4 columns for the grid
+
+# Initialize an empty dictionary for selected satellites
+selected_satellites = {}
+
+# Loop over satellites and create checkboxes in the grid
+for idx, sat_name in enumerate(satellites.keys()):
+    col = cols[idx % 4]  # Determine which column to place the checkbox in
+    if col.checkbox(sat_name, value=True):
+        selected_satellites[sat_name] = satellites[sat_name]
+
+# Fetch data for the selected satellites
+satellite_data = fetch_satellite_data(selected_satellites)
+
+# Display Satellite Location and Map
+if satellite_data:
+    st.header("Current Location of ISRO Satellites")
+    
+    # Prepare data for map and display details
+    map_data = []
+    for sat in satellite_data:
+        st.subheader(f"Satellite: {sat['name']}")
+        st.write(f"**Latitude:** {sat['latitude']}")
+        st.write(f"**Longitude:** {sat['longitude']}")
+        
+        map_data.append({
+            'lat': sat['latitude'],
+            'lon': sat['longitude'],
+            'name': sat['name'],
+            'color': sat['color']
+        })
+    
+    # Convert map data to DataFrame
+    df = pd.DataFrame(map_data)
+
+    # Define the pydeck layer
+    layer = pdk.Layer(
+        'ScatterplotLayer',
+        data=df,
+        get_position='[lon, lat]',
+        get_fill_color='color',  # Use 'get_fill_color' to assign color
+        get_radius=50000,  # Same size for all
+        pickable=True
+    )
+
+    # Define the view state of the map
+    view_state = pdk.ViewState(
+        latitude=df['lat'].mean(),
+        longitude=df['lon'].mean(),
+        zoom=3,
+        pitch=0
+    )
+
+    # Render the pydeck map
+    r = pdk.Deck(
+        layers=[layer],
+        initial_view_state=view_state,
+        tooltip={"text": "{name}"}
+    )
+
+    st.pydeck_chart(r)
+else:
+    st.write("No satellite selected or failed to fetch satellite data.")
