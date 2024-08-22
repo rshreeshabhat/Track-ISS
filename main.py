@@ -71,10 +71,6 @@ if satellite_data:
     # Prepare data for map and display details
     map_data = []
     for sat in satellite_data:
-        st.subheader(f"Satellite: {sat['name']}")
-        st.write(f"**Latitude:** {sat['latitude']}")
-        st.write(f"**Longitude:** {sat['longitude']}")
-        
         map_data.append({
             'lat': sat['latitude'],
             'lon': sat['longitude'],
@@ -89,7 +85,7 @@ if satellite_data:
         'ScatterplotLayer',
         data=df,
         get_position='[lon, lat]',
-        get_color='[255,0,255]',  # Cyan color
+        get_color='[255,0,255]',  
         get_radius=50000,
         pickable=True
     )
