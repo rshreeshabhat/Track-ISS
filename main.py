@@ -22,50 +22,32 @@ satellites = {
     "GSAT-6A": 43241,
     "GSAT-7": 39234,
     "GSAT-10": 38778,
-    "GSAT-12": 37746,
-    "GSAT-16": 40332,
     "GSAT-18": 41793,
-    "RISAT-1": 38337,
-    "RISAT-2": 34807,
-    "IRNSS-1A": 39199,
-    "IRNSS-1B": 39635,
     "IRNSS-1C": 40269,
-    "IRNSS-1D": 40547,
-    "IRNSS-1E": 41384,
     "IRNSS-1F": 41469,
-    "IRNSS-1G": 41589,
     "Chandrayaan-2 Orbiter": 44426
 }
 
 # Assign unique colors for each satellite
 satellite_colors = {
-    "Cartosat-2A": "#FF0000",  # Red
-    "Cartosat-2B": "#00FF00",  # Green
-    "Cartosat-2C": "#0000FF",  # Blue
-    "Cartosat-2D": "#FFFF00",  # Yellow
-    "Cartosat-2E": "#FF00FF",  # Magenta
-    "Cartosat-2F": "#00FFFF",  # Cyan
-    "INSAT-3A": "#FFA500",  # Orange
-    "INSAT-3C": "#800080",  # Purple
-    "INSAT-4A": "#008080",  # Teal
-    "INSAT-4B": "#808000",  # Olive
-    "INSAT-4CR": "#000080",  # Navy
-    "GSAT-6A": "#C0C0C0",  # Silver
-    "GSAT-7": "#808080",  # Gray
-    "GSAT-10": "#00FF7F",  # Spring Green
-    "GSAT-12": "#FF1493",  # Deep Pink
-    "GSAT-16": "#7B68EE",  # Medium Slate Blue
-    "GSAT-18": "#4169E1",  # Royal Blue
-    "RISAT-1": "#6A5ACD",  # Slate Blue
-    "RISAT-2": "#DC143C",  # Crimson
-    "IRNSS-1A": "#FF6347",  # Tomato
-    "IRNSS-1B": "#20B2AA",  # Light Sea Green
-    "IRNSS-1C": "#6B8E23",  # Olive Drab
-    "IRNSS-1D": "#FFD700",  # Gold
-    "IRNSS-1E": "#9ACD32",  # Yellow Green
-    "IRNSS-1F": "#FF8C00",  # Dark Orange
-    "IRNSS-1G": "#E9967A",  # Dark Salmon
-    "Chandrayaan-2 Orbiter": "#483D8B"  # Dark Slate Blue
+    "Cartosat-2A": "🔴",  # Red
+    "Cartosat-2B": "🟢",  # Green
+    "Cartosat-2C": "🔵",  # Blue
+    "Cartosat-2D": "🟡",  # Yellow
+    "Cartosat-2E": "🟣",  # Magenta
+    "Cartosat-2F": "🔵",  # Cyan
+    "INSAT-3A": "🟠",  # Orange
+    "INSAT-3C": "🟣",  # Purple
+    "INSAT-4A": "🟡",  # Teal
+    "INSAT-4B": "🟢",  # Olive
+    "INSAT-4CR": "🔵",  # Navy
+    "GSAT-6A": "⚪",  # Silver
+    "GSAT-7": "⚫",  # Gray
+    "GSAT-10": "🟢",  # Spring Green
+    "GSAT-18": "🔵",  # Royal Blue
+    "IRNSS-1C": "🟢",  # Olive Drab
+    "IRNSS-1F": "🟠",  # Dark Orange
+    "Chandrayaan-2 Orbiter": "🔵"  # Dark Slate Blue
 }
 
 # Function to fetch data for selected satellites
@@ -97,9 +79,8 @@ cols = st.columns(4)  # Creating 4 columns for the grid
 
 for idx, (sat_name, sat_id) in enumerate(satellites.items()):
     col = cols[idx % 4]  # Determine which column to place the checkbox in
-    color_hex = satellite_colors[sat_name]  # Get the hex color for the satellite
-    color_label = f'<span style="color:{color_hex};">&#11044;</span> '  # Create a colored dot label
-    if col.checkbox(f"{color_label}{sat_name}", value=True):
+    color_label = satellite_colors[sat_name]  # Get the Unicode color for the satellite
+    if col.checkbox(f"{color_label} {sat_name}", value=True):
         selected_satellites[sat_name] = sat_id
 
 # Fetch data for the selected satellites
@@ -112,11 +93,12 @@ if satellite_data:
     # Prepare data for map and display details
     map_data = []
     for sat in satellite_data:
+        
         map_data.append({
             'lat': sat['latitude'],
             'lon': sat['longitude'],
             'name': sat['name'],
-            'color': sat['color']
+            'color': [int(sat['color'].lstrip('#')[i:i+2], 16) for i in (0, 2, 4)]
         })
     
     # Convert map data to DataFrame
