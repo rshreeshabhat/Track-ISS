@@ -6,7 +6,6 @@ import pydeck as pdk
 # Set the title of the app
 st.title("ISRO Satellite Tracker")
 
-
 # Satellite data with IDs and names
 satellites = {
     "Cartosat-2A": 32783,
@@ -38,9 +37,6 @@ satellites = {
     "Chandrayaan-2 Orbiter": 44426
 }
 
-# Sidebar checkboxes for satellite selection
-selected_satellites = [sat_name for sat_name in satellites if st.sidebar.checkbox(sat_name, value=True)]
-
 # Function to fetch data for selected satellites
 def fetch_satellite_data(satellite_ids):
     satellite_data = []
@@ -61,12 +57,15 @@ def fetch_satellite_data(satellite_ids):
     
     return satellite_data
 
+# Initially fetch data for all satellites
+selected_satellites = {name: satellites[name] for name in satellites.keys()}
+
 # Fetch data for the selected satellites
-satellite_data = fetch_satellite_data({name: satellites[name] for name in selected_satellites})
+satellite_data = fetch_satellite_data(selected_satellites)
 
 # Display Satellite Location and Map
 if satellite_data:
-    st.header("Current Location of Selected ISRO Satellites")
+    st.header("Current Location of ISRO Satellites")
     
     # Prepare data for map and display details
     map_data = []
@@ -85,7 +84,7 @@ if satellite_data:
         'ScatterplotLayer',
         data=df,
         get_position='[lon, lat]',
-        get_color='[255,0,255]',  
+        get_color='[255,0,255]',
         get_radius=50000,
         pickable=True
     )
@@ -108,3 +107,12 @@ if satellite_data:
     st.pydeck_chart(r)
 else:
     st.write("No satellite selected or failed to fetch satellite data.")
+
+# Checkboxes for satellite selection below the map
+st.subheader("Select Satellites to Display on the Map:")
+for sat_name in satellites.keys():
+    if st.checkbox(sat_name, value=True):
+        selected_satellites[sat_name] = satellites[sat_name]
+    else:
+        if sat_name in selected_satellites:
+            del selected_satellites[sat_name]
