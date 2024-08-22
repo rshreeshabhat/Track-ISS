@@ -114,9 +114,6 @@ if satellite_data:
     # Prepare data for map and display details
     map_data = []
     for sat in satellite_data:
-        st.subheader(f"Satellite: {sat['name']}")
-        st.write(f"**Latitude:** {sat['latitude']}")
-        st.write(f"**Longitude:** {sat['longitude']}")
         
         map_data.append({
             'lat': sat['latitude'],
