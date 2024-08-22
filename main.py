@@ -37,6 +37,37 @@ satellites = {
     "Chandrayaan-2 Orbiter": 44426
 }
 
+# Assign unique colors for each satellite
+satellite_colors = {
+    "Cartosat-2A": [255, 0, 0],  # Red
+    "Cartosat-2B": [0, 255, 0],  # Green
+    "Cartosat-2C": [0, 0, 255],  # Blue
+    "Cartosat-2D": [255, 255, 0],  # Yellow
+    "Cartosat-2E": [255, 0, 255],  # Magenta
+    "Cartosat-2F": [0, 255, 255],  # Cyan
+    "INSAT-3A": [255, 165, 0],  # Orange
+    "INSAT-3C": [128, 0, 128],  # Purple
+    "INSAT-4A": [0, 128, 128],  # Teal
+    "INSAT-4B": [128, 128, 0],  # Olive
+    "INSAT-4CR": [0, 0, 128],  # Navy
+    "GSAT-6A": [192, 192, 192],  # Silver
+    "GSAT-7": [128, 128, 128],  # Gray
+    "GSAT-10": [0, 255, 127],  # Spring Green
+    "GSAT-12": [255, 20, 147],  # Deep Pink
+    "GSAT-16": [123, 104, 238],  # Medium Slate Blue
+    "GSAT-18": [65, 105, 225],  # Royal Blue
+    "RISAT-1": [106, 90, 205],  # Slate Blue
+    "RISAT-2": [220, 20, 60],  # Crimson
+    "IRNSS-1A": [255, 99, 71],  # Tomato
+    "IRNSS-1B": [32, 178, 170],  # Light Sea Green
+    "IRNSS-1C": [107, 142, 35],  # Olive Drab
+    "IRNSS-1D": [255, 215, 0],  # Gold
+    "IRNSS-1E": [154, 205, 50],  # Yellow Green
+    "IRNSS-1F": [255, 140, 0],  # Dark Orange
+    "IRNSS-1G": [233, 150, 122],  # Dark Salmon
+    "Chandrayaan-2 Orbiter": [72, 61, 139]  # Dark Slate Blue
+}
+
 # Function to fetch data for selected satellites
 def fetch_satellite_data(satellite_ids):
     satellite_data = []
@@ -51,6 +82,7 @@ def fetch_satellite_data(satellite_ids):
                 'name': sat_name,
                 'latitude': position.get('satlatitude', 'N/A'),
                 'longitude': position.get('satlongitude', 'N/A'),
+                'color': satellite_colors[sat_name]
             })
         else:
             st.error(f"Error: 'positions' not found for satellite {sat_name}.")
@@ -70,10 +102,15 @@ if satellite_data:
     # Prepare data for map and display details
     map_data = []
     for sat in satellite_data:
+        st.subheader(f"Satellite: {sat['name']}")
+        st.write(f"**Latitude:** {sat['latitude']}")
+        st.write(f"**Longitude:** {sat['longitude']}")
+        
         map_data.append({
             'lat': sat['latitude'],
             'lon': sat['longitude'],
-            'name': sat['name']
+            'name': sat['name'],
+            'color': sat['color']
         })
     
     # Convert map data to DataFrame
@@ -84,8 +121,8 @@ if satellite_data:
         'ScatterplotLayer',
         data=df,
         get_position='[lon, lat]',
-        get_color='[255,0,255]',
-        get_radius=50000,
+        get_color='color',
+        get_radius=50000,  # Same size for all
         pickable=True
     )
 
@@ -110,8 +147,14 @@ else:
 
 # Checkboxes for satellite selection below the map
 st.subheader("Select Satellites to Display on the Map:")
-for sat_name in satellites.keys():
-    if st.checkbox(sat_name, value=True):
+
+# Arrange checkboxes in a grid layout
+cols = st.columns(4)  # Creating 4 columns for the grid
+
+# Loop over satellites and create checkboxes in the grid
+for idx, sat_name in enumerate(satellites.keys()):
+    col = cols[idx % 4]  # Determine which column to place the checkbox in
+    if col.checkbox(sat_name, value=True):
         selected_satellites[sat_name] = satellites[sat_name]
     else:
         if sat_name in selected_satellites:
