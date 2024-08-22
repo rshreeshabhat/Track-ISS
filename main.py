@@ -125,7 +125,6 @@ if satellite_data:
     # Prepare data for map and display details
     map_data = []
     for sat in satellite_data:
-       
         map_data.append({
             'lat': sat['latitude'],
             'lon': sat['longitude'],
