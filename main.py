@@ -6,47 +6,35 @@ import pydeck as pdk
 # Set the title of the app
 st.title("ISRO Satellite Tracker")
 
-# Satellite data with IDs and names categorized
-satellite_categories = {
-    "Cartosat Series": {
-        "Cartosat-2A": 32783,
-        "Cartosat-2B": 36839,
-        "Cartosat-2C": 41599,
-        "Cartosat-2D": 42063,
-        "Cartosat-2E": 42747,
-        "Cartosat-2F": 43111,
-    },
-    "INSAT Series": {
-        "INSAT-3A": 27714,
-        "INSAT-3C": 27298,
-        "INSAT-4A": 28911,
-        "INSAT-4B": 30793,
-        "INSAT-4CR": 32050,
-    },
-    "GSAT Series": {
-        "GSAT-6A": 43241,
-        "GSAT-7": 39234,
-        "GSAT-10": 38778,
-        "GSAT-12": 37746,
-        "GSAT-16": 40332,
-        "GSAT-18": 41793,
-    },
-    "RISAT Series": {
-        "RISAT-1": 38337,
-        "RISAT-2": 34807,
-    },
-    "IRNSS Series": {
-        "IRNSS-1A": 39199,
-        "IRNSS-1B": 39635,
-        "IRNSS-1C": 40269,
-        "IRNSS-1D": 40547,
-        "IRNSS-1E": 41384,
-        "IRNSS-1F": 41469,
-        "IRNSS-1G": 41589,
-    },
-    "Other": {
-        "Chandrayaan-2 Orbiter": 44426
-    }
+# Satellite data with IDs and names
+satellites = {
+    "Cartosat-2A": 32783,
+    "Cartosat-2B": 36839,
+    "Cartosat-2C": 41599,
+    "Cartosat-2D": 42063,
+    "Cartosat-2E": 42747,
+    "Cartosat-2F": 43111,
+    "INSAT-3A": 27714,
+    "INSAT-3C": 27298,
+    "INSAT-4A": 28911,
+    "INSAT-4B": 30793,
+    "INSAT-4CR": 32050,
+    "GSAT-6A": 43241,
+    "GSAT-7": 39234,
+    "GSAT-10": 38778,
+    "GSAT-12": 37746,
+    "GSAT-16": 40332,
+    "GSAT-18": 41793,
+    "RISAT-1": 38337,
+    "RISAT-2": 34807,
+    "IRNSS-1A": 39199,
+    "IRNSS-1B": 39635,
+    "IRNSS-1C": 40269,
+    "IRNSS-1D": 40547,
+    "IRNSS-1E": 41384,
+    "IRNSS-1F": 41469,
+    "IRNSS-1G": 41589,
+    "Chandrayaan-2 Orbiter": 44426
 }
 
 # Assign unique colors for each satellite
@@ -101,19 +89,18 @@ def fetch_satellite_data(satellite_ids):
     
     return satellite_data
 
-# Grouped checkboxes for satellite selection with color labels
+# Checkboxes for satellite selection with color labels in a grid format
 st.subheader("Select Satellites to Display on the Map:")
 selected_satellites = {}
 
-for category, sats in satellite_categories.items():
-    with st.expander(f"{category}"):
-        cols = st.columns(4)  # Creating 4 columns for the grid
-        for idx, (sat_name, sat_id) in enumerate(sats.items()):
-            col = cols[idx % 4]  # Determine which column to place the checkbox in
-            color_hex = satellite_colors[sat_name]  # Get the hex color for the satellite
-            color_label = f'<span style="color:{color_hex};">&#11044;</span> '  # Create a colored dot label
-            if col.checkbox(f"{color_label}{sat_name}", value=True):
-                selected_satellites[sat_name] = sat_id
+cols = st.columns(4)  # Creating 4 columns for the grid
+
+for idx, (sat_name, sat_id) in enumerate(satellites.items()):
+    col = cols[idx % 4]  # Determine which column to place the checkbox in
+    color_hex = satellite_colors[sat_name]  # Get the hex color for the satellite
+    color_label = f'<span style="color:{color_hex};">&#11044;</span> '  # Create a colored dot label
+    if col.checkbox(f"{color_label}{sat_name}", value=True):
+        selected_satellites[sat_name] = sat_id
 
 # Fetch data for the selected satellites
 satellite_data = fetch_satellite_data(selected_satellites)
